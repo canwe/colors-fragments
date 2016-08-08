@@ -6,7 +6,6 @@
     android:orientation="vertical"
     android:gravity="center">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:id="@+id/scoresTable"
         android:layout_width="wrap_content"
@@ -21,12 +20,12 @@
         android:gravity="center|bottom"
         android:layout_weight="1"
         android:padding="@dimen/activity_horizontal_margin">
-    <Button
-        android:id="@+id/buttonNewGame"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Game"
-        />
+
+        <Button
+            android:id="@+id/buttonNewGame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Game" />
 
         </LinearLayout>
 

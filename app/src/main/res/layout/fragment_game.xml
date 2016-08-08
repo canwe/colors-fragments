@@ -15,22 +15,20 @@
         android:layout_gravity="top"
         >
         <TextView
-            android:height="35dp"
             android:id="@+id/timerText"
+            android:height="35dp"
             style="@style/statusBarText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Time:    "
-            />
+            android:text="Time:    " />
 
         <TextView
-            android:height="35dp"
             android:id="@+id/scoresText"
+            android:height="35dp"
             style="@style/statusBarText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Score  0"
-            />
+            android:text="Score  0" />
 
             <LinearLayout
                 android:id="@+id/lifeLinearLayout"
@@ -39,6 +37,7 @@
                 android:background="@color/whiteTransparent"
                 android:layout_gravity="center_vertical"
                 android:gravity="center_vertical">
+
                 <ImageView
                     android:id="@+id/imageView1"
                     style="@style/lifeStatusStyle"/>
@@ -52,17 +51,15 @@
                     android:id="@+id/imageView4"
                     style="@style/lifeStatusStyle"/>
             </LinearLayout>
-
-
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/textColorLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="center"
-        android:gravity="center_horizontal"
-        >
+        android:gravity="center_horizontal">
 
         <ImageView
             android:id="@+id/meaningImage"
@@ -73,15 +70,13 @@
             android:id="@+id/textButton"
             style="@style/GameButton"
             android:background="@drawable/round_rect_bg"
-            android:layout_marginBottom="16dp"
-            />
+            android:layout_marginBottom="16dp" />
 
         <Button
             android:id="@+id/colorButton"
             style="@style/GameButton"
             android:background="@drawable/round_rect_bg"
-            android:elevation="@dimen/elevationColorShape"
-            />
+            android:elevation="@dimen/elevationColorShape" />
         <ImageView
             android:id="@+id/textcolorImage"
             android:layout_width="150dp"
@@ -96,32 +91,26 @@
         android:layout_height="70dp"
         android:contentDescription="@string/hello_blank_fragment"
         android:src="@drawable/cross"
-        android:layout_gravity="center"
-        />
+        android:layout_gravity="center" />
 
     <LinearLayout
         android:id="@+id/mainLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center|bottom"
-        android:layout_gravity="bottom"
-        >
+        android:layout_gravity="bottom">
 
         <Button
             android:id="@+id/negativeButton"
             android:text="NO"
             style="@style/YesNoStyle"
-            android:layout_marginRight="4dp"
-            />
+            android:layout_marginRight="4dp" />
 
         <Button
             android:id="@+id/positiveButton"
             android:text="YES"
             style="@style/YesNoStyle"
-            android:layout_marginLeft="4dp"
-            />
-
-
+            android:layout_marginLeft="4dp" />
     </LinearLayout>
 </FrameLayout>
 

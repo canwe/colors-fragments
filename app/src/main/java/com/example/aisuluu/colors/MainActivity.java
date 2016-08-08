@@ -10,9 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
 
-public class MainActivity extends AppCompatActivity implements GameFragment.GameFragmentListener, BlankFragment.OnFragmentInteractionListener, ScoresTableFragment.OnFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity implements GameFragment.GameFragmentListener, ScoreFragment.OnFragmentInteractionListener, ScoresTableFragment.OnFragmentInteractionListener {
 
-    int mScore = 0;
     protected FragmentManager fm;
     protected FragmentTransaction ft;
     String scoresRecord;
@@ -22,35 +21,30 @@ public class MainActivity extends AppCompatActivity implements GameFragment.Game
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Setting app to full screen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_main);
 
-
-
         fm = getSupportFragmentManager();
 
+        // Load Game Fragment
         ft = fm.beginTransaction();
         ft.replace(R.id.fragment_container, gameFragment);
         ft.commit();
-
     }
 
-
+    // Receive score from Game Fragment and pass it to Score Fragment
     @Override
     public void getScore(int score) {
-        mScore = score;
-        Bundle bundle = new Bundle();
-        bundle.putString("message", "Message to check" );
-        bundle.putInt("score", score);
-
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.fragment_container, BlankFragment.newInstance(String.valueOf(score), "0"));
+        ft.replace(R.id.fragment_container, ScoreFragment.newInstance(String.valueOf(score)));
         ft.commit();
     }
 
+    // Get score and username from Score Fragment, add record to SharedPreferences, pass String with all scores to ScoreTable Fragment
     @Override
     public void loadScore(String score, String userName){
 
@@ -61,17 +55,14 @@ public class MainActivity extends AppCompatActivity implements GameFragment.Game
         editor.putString("SCORES", scoresRecord + "\n" + score + " " + userName + "\n");
         editor.apply();
 
-        String scoresTable = preferences.getString("SCORES", "NO SCORES");
+        String scoresTable = preferences.getString("SCORES", "");
 
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.fragment_container, ScoresTableFragment.newInstance(scoresTable, ""));
+        ft.replace(R.id.fragment_container, ScoresTableFragment.newInstance(scoresTable));
         ft.commit();
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-    }
-
+    // After the scores are saved, load new game
     @Override
     public void loadNewGame(){
         FragmentTransaction ft = fm.beginTransaction();

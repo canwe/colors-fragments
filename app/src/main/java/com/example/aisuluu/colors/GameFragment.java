@@ -1,6 +1,5 @@
 package com.example.aisuluu.colors;
 
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -10,7 +9,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,9 +26,6 @@ import android.widget.Toast;
 
 import java.util.Random;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class GameFragment extends Fragment {
 
     GameFragmentListener gameFragmentListener;
@@ -51,7 +46,6 @@ public class GameFragment extends Fragment {
     final int gameDuration = 30000; // in millis
     final int tickPeriod = 1000; // in millis
     int answerStatusImageDuration = 1000; // in milliseconds
-    ScaleAnimation scaleAnimation;
     LinearLayout textColorLinearLayout;
     float[] xOfLifeStatus = new float[4];
 
@@ -63,6 +57,7 @@ public class GameFragment extends Fragment {
     Animation counterAnimation;
 
     String mTextArray[] = {"black", "blue", "yellow", "red"};
+    String mColorArray[] = {"#343434", "#3e9acf", "#f6ce1f", "#eb3238"};
     String mTextToCheck = "";
     String mColorToCheck = "";
     Boolean mAnswerToCheck = false;
@@ -148,11 +143,17 @@ public class GameFragment extends Fragment {
             }
         });
         positiveButton = (Button) view.findViewById(R.id.positiveButton);
-        positiveButton.setOnClickListener(onYesClickListener);
+        positiveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAnswerToCheck = true;
+                checkAnswer();
+            }
+        });
 
         answerStatusImageAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.obj_tran);
-        slideInTextAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.slidein_text_animation);
-        slideInColorAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.slidein_color_animation);
+        slideInTextAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_text_animation);
+        slideInColorAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_color_animation);
         counterAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.counter_animation);
 
         slideInMeaningAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_meaning_animation);
@@ -164,10 +165,9 @@ public class GameFragment extends Fragment {
         rand = new Random();
         mHandler = new Handler(Looper.getMainLooper());
 
-        //answerStatusImage.setVisibility(View.VISIBLE);
-
         answerStatusImage.setImageResource(R.drawable.counter_3);
 
+        //declare timer
         timer = new CountDownTimer(gameDuration, tickPeriod) {
             public void onTick(long millisUntilFinished) {
                 if(mLifeCounter > 0 && timerText != null)
@@ -181,9 +181,9 @@ public class GameFragment extends Fragment {
             //after 30 secs, replace game fragment with score fragment
             public void onFinish() {
                 sendMessage(mScores);
-                Log.d("MYLOG", "FINISHED");
             }
         };
+
         counter = 3;
         // 3, 2, 1 counter
         scaleView();
@@ -199,7 +199,6 @@ public class GameFragment extends Fragment {
             public void onAnimationEnd(Animation animation) {
                 if (counter > 0) {
                     String resOfImage = "drawable/counter_" + counter;
-                    Log.d("MYLOG", resOfImage);
                     answerStatusImage.setImageResource(resources.getIdentifier(resOfImage, null, packageName));
                     counter--;
                     animation.start();
@@ -213,13 +212,15 @@ public class GameFragment extends Fragment {
                 }
         });
 
+        // Animations
         answerStatusImage.startAnimation(animationSet);
         meaningImage.startAnimation(slideInMeaningAnimation);
         textcolorImage.startAnimation(slideInTextColorAnimation);
 
-
+        // Disable Yes No buttons until the game has started
         positiveButton.setEnabled(false);
         negativeButton.setEnabled(false);
+
         // after 3, 2, 1
         mHandler.postDelayed(new Runnable() {
             public void run() {
@@ -229,13 +230,11 @@ public class GameFragment extends Fragment {
                     positiveButton.setEnabled(true);
                     negativeButton.setEnabled(true);
                 }
-
-
                 generatePairs();
             }
         }, 5000);
 
-        //get x coordinates only after the layout is created
+        // Get x coordinates only after the layout is created
         view.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
@@ -254,7 +253,7 @@ public class GameFragment extends Fragment {
         return view;
     }
 
-    //generating random text and colors
+    // Generating random text and colors
     public void generatePairs(){
         if (rand == null) rand = new Random();
         int textArrayRandomPosition = rand.nextInt(mTextArray.length);
@@ -270,27 +269,16 @@ public class GameFragment extends Fragment {
             textArrayRandomPosition = rand.nextInt(mTextArray.length);
             textButton.setTextColor(Color.parseColor(mTextArray[0]));
 
-            colorButton.setTextColor(Color.parseColor(mTextArray[textArrayRandomPosition]));
+            colorButton.setTextColor(Color.parseColor(mColorArray[textArrayRandomPosition]));
 
             mColorToCheck = mTextArray[textArrayRandomPosition];
         }
     }
 
-    private View.OnClickListener onYesClickListener = new View.OnClickListener(){
-
-        @Override
-        public void onClick(View view) {
-            mAnswerToCheck = true;
-            checkAnswer();
-        }
-    };
-
-    //check if generated pairs and answer are correct
+    // Check if generated pairs and answer are correct
     public void checkAnswer(){
 
-        Log.d("MYLOG", "Text: " + mTextToCheck + " Color: " + mColorToCheck + " Answer: " + mAnswerToCheck);
-
-
+        // If the answer is correct, add 1 point to score, animate Tick drawable to fly to the scores TextView
         if((mTextToCheck.equals(mColorToCheck)) == mAnswerToCheck){
             mScores++;
             answerStatusImage.setImageResource(R.drawable.tick);
@@ -309,17 +297,18 @@ public class GameFragment extends Fragment {
 
             answerStatusImage.startAnimation(answerStatusImageTranslate);
 
-
             if (mLifeCounter > 0) {
-
+                // Change color of the right answer to black
                 if (mAnswerToCheck) {
                     negativeButton.setTextColor(Color.BLACK);
                 } else
                     positiveButton.setTextColor(Color.BLACK);
 
+                // Disable Yes No buttons until next pair is generated
                 negativeButton.setEnabled(false);
                 positiveButton.setEnabled(false);
 
+                // After all of the animations are finished, generate new pair
                 mHandler.postDelayed(new Runnable() {
                     public void run() {
 
@@ -328,29 +317,25 @@ public class GameFragment extends Fragment {
                         negativeButton.setTextColor(ContextCompat.getColor(getContext(), R.color.colorYesNoButton));
                         positiveButton.setTextColor(ContextCompat.getColor(getContext(), R.color.colorYesNoButton));
 
+                        // If ran out of lives
                         if (mLifeCounter == 0) {
                             Toast.makeText(getActivity(), "GAMEOVER", Toast.LENGTH_SHORT).show();
                         } else
                             generatePairs();
                     }
                 }, answerStatusImageDuration);
-
             }
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    // Change life status image according to lives left
                     View v = lifeLinearLayout.getChildAt(mLifeCounter);
                     ImageView lifeImageView = (ImageView) v;
                     lifeImageView.setImageResource(R.drawable.deadlifecircle);
                 }
             }, 700);
-
         }
-
-        //answerStatusImage.startAnimation(answerStatusImageAnimation);
-
     }
-
 
     public void scaleView() {
 
@@ -398,10 +383,8 @@ public class GameFragment extends Fragment {
 
         answerStatusImageTranslate.setFillAfter(false);
         answerStatusImageTranslate.setFillBefore(true);
-
-       // answerStatusImageTranslate.setStartOffset(100);
-
     }
+
     public void answerStatusImageTickAnim(){
 
         if (answerStatusImageScale == null) answerStatusImageScale = new AnimationSet(true);
@@ -412,10 +395,6 @@ public class GameFragment extends Fragment {
         Animation scaleZoomOut = new ScaleAnimation(1f, 1f, 1f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         scaleZoomOut.setDuration(80);
         scaleZoomOut.setStartOffset(50);
-//        scaleZoomOut.setFillAfter(false);
-//        scaleZoomIn.setFillBefore(false);
-//        scaleZoomOut.setFillBefore(false);
-//        scaleZoomIn.setFillAfter(false);
 
         answerStatusImageTranslate.addAnimation(scaleZoomIn);
         answerStatusImageTranslate.addAnimation(scaleZoomOut);
@@ -436,13 +415,6 @@ public class GameFragment extends Fragment {
 
         answerStatusImageTranslate.setFillAfter(false);
         answerStatusImageTranslate.setFillBefore(true);
-
-        // answerStatusImageTranslate.setStartOffset(100);
-
-
-
-
-
 
     }
 
